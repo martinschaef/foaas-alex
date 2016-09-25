@@ -9,6 +9,8 @@ http://amzn.to/1LGWsLG
 from __future__ import print_function
 
 import json
+import random
+import urllib
 import requests
 
 # --------------- Helpers that build all of the responses ----------------------
@@ -73,33 +75,76 @@ def handle_session_end_request():
         card_title, speech_output, None, should_end_session))
 
 
+def get_random_endpoint_for_person(to_text, from_text="Amazon"):
+    foo = ['outside', 'chainsaw', 'king', 'shakespeare', 'donut', 'ing', 'off', 'madison', 'yoda'] 
+    return "http://foaas.com/{}/{}/{}".format(random.choice(foo), urllib.quote(to_text), urllib.quote(from_text))
 
-def set_color_in_session(intent, session):
+def get_random_endpoint(from_text="Amazon"):
+    foo = ['this', 'that', 'everything', 'everyone', 'pink', 'life', 'flying', 'family', 'retard', 'sake']  
+    return "http://foaas.com/{}/{}".format(random.choice(foo), urllib.quote(from_text))
+    
+
+def get_person_insult(intent, session):
     """ Sets the color in the session and prepares the speech to reply to the
     user.
     """
 
     card_title = intent['name']
     session_attributes = {}
-    should_end_session = False
+    should_end_session = True
 
     if 'KeyWord' in intent['slots']:
         kw = intent['slots']['KeyWord']['value']
         #session_attributes = create_favorite_color_attributes(favorite_color)
         speech_output = "What the fuck is wrong with you asking me about " + \
                         kw
-        reprompt_text = "Martin is very bored on the weekends."
+        reprompt_text = ""
         
         try: 
-        	request = "http://foaas.com/outside/{}/Amazon".format(kw)
-        	resp = requests.get(request, headers={ 'Accept': 'application/json' })
-        	if resp.status_code != 200:
-        		pass
-        	else:
-        		data = json.loads(resp.content)
-        		speech_output = data['message']
+            request = get_random_endpoint_for_person(kw)
+            resp = requests.get(request, headers={ 'Accept': 'application/json' })
+            if resp.status_code != 200:
+                pass
+            else:
+                data = json.loads(resp.content)
+                speech_output = data['message']
         except e: 
-        	pass        
+            print (request)
+            print (e)
+    else:
+        speech_output = "I'm not sure what the fuck you said. " \
+                        "Please try again."
+        reprompt_text = "Martin is very bored on the weekends."
+    return build_response(session_attributes, build_speechlet_response(
+        card_title, speech_output, reprompt_text, should_end_session))
+
+def get_general_insult(intent, session):
+    """ Sets the color in the session and prepares the speech to reply to the
+    user.
+    """
+
+    card_title = intent['name']
+    session_attributes = {}
+    should_end_session = True
+
+    if 'KeyWord' in intent['slots']:
+        kw = intent['slots']['KeyWord']['value']
+        #session_attributes = create_favorite_color_attributes(favorite_color)
+        speech_output = "What the fuck is wrong with you asking me about " + \
+                        kw
+        reprompt_text = ""
+        
+        try: 
+            request = get_random_endpoint()
+            resp = requests.get(request, headers={ 'Accept': 'application/json' })
+            if resp.status_code != 200:
+                pass
+            else:
+                data = json.loads(resp.content)
+                speech_output = data['message']
+        except e: 
+            print (request)
+            print (e)
         
     else:
         speech_output = "I'm not sure what the fuck you said. " \
@@ -108,26 +153,6 @@ def set_color_in_session(intent, session):
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
 
-
-def get_color_from_session(intent, session):
-    session_attributes = {}
-    reprompt_text = None
-
-    if session.get('attributes', {}) and "favoriteColor" in session.get('attributes', {}):
-        favorite_color = session['attributes']['favoriteColor']
-        speech_output = "Your favorite color is " + favorite_color + \
-                        ". Goodbye."
-        should_end_session = True
-    else:
-        speech_output = "I'm not sure what your favorite color is. " \
-                        "You can say, my favorite color is red."
-        should_end_session = False
-
-    # Setting reprompt_text to None signifies that we do not want to reprompt
-    # the user. If the user does not respond or says something that is not
-    # understood, the session will end.
-    return build_response(session_attributes, build_speechlet_response(
-        intent['name'], speech_output, reprompt_text, should_end_session))
 
 
 # --------------- Events ------------------
@@ -160,8 +185,10 @@ def on_intent(intent_request, session):
     intent_name = intent_request['intent']['name']
 
     # Dispatch to your skill's intent handlers
-    if intent_name == "GetAnything":
-        return set_color_in_session(intent, session)
+    if intent_name == "AboutPerson":
+        return get_person_insult(intent, session)
+    if intent_name == "AboutEveryone":
+        return get_general_insult(intent, session)
     else:
         raise ValueError("Invalid intent")
 

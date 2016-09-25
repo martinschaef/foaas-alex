@@ -1,0 +1,22 @@
+{
+  "intents": [
+    {
+      "intent": "AboutPerson",
+      "slots": [
+        {
+          "name": "KeyWord",
+          "type": "AMAZON.LITERAL"
+        }
+      ]
+    },{
+      "intent": "AboutEveryone",
+      "slots": [
+        {
+          "name": "KeyWord",
+          "type": "AMAZON.LITERAL"
+        }
+      ]
+    }
+    
+  ]
+}

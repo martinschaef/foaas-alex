@@ -1,0 +1,10 @@
+AboutPerson what we think about {travis|KeyWord}
+AboutPerson what we say about {travis|KeyWord}
+AboutPerson what {martin|KeyWord} should do
+AboutPerson to tell {Ben|KeyWord} to fuck off
+AboutPerson to tell {Andy|KeyWord} to go fuck himself
+AboutPerson to tell {the world|KeyWord} to go fuck itself
+AboutPerson to tell {Tina|KeyWord} to go fuck herself
+AboutPerson to insult {everyone|KeyWord}
+AboutEveryone that they can {everyone|KeyWord}
+AboutEveryone that they should {everyone|KeyWord}
