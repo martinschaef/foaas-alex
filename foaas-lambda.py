@@ -1,10 +1,6 @@
 """
-This sample demonstrates a simple skill built with the Amazon Alexa Skills Kit.
-The Intent Schema, Custom Slots, and Sample Utterances for this skill, as well
-as testing instructions are located at http://amzn.to/1LzFrj6
+F-O-A-A-S Skill. 
 
-For additional samples, visit the Alexa Skills Kit Getting Started guide at
-http://amzn.to/1LGWsLG
 """
 from __future__ import print_function
 
@@ -53,13 +49,13 @@ def get_welcome_response():
 
     session_attributes = {}
     card_title = "Welcome"
-    speech_output = "Welcome to the Alexa Skills Kit sample. " \
-                    "Please tell me your favorite color by saying, " \
-                    "my favorite color is red"
+    speech_output = "Welcome to the F-O-A-A-S Skill. " \
+                    "Please tell me who to insult by saying, " \
+                    "tell person to fuck off, or everyone fuck off."
     # If the user either does not reply to the welcome message or says something
     # that is not understood, they will be prompted again with this text.
-    reprompt_text = "Please tell me your favorite color by saying, " \
-                    "my favorite color is red."
+    reprompt_text = "Please tell me who to insult by saying, " \
+                    "tell person to fuck off, or everyone fuck off."
     should_end_session = False
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
@@ -67,7 +63,7 @@ def get_welcome_response():
 
 def handle_session_end_request():
     card_title = "Session Ended"
-    speech_output = "Thank you for trying the Alexa Skills Kit sample. " \
+    speech_output = "Thank you for trying the F-O-A-A-S Skill. " \
                     "Have a nice day! "
     # Setting this to true ends the session and exits the skill.
     should_end_session = True
@@ -75,84 +71,81 @@ def handle_session_end_request():
         card_title, speech_output, None, should_end_session))
 
 
-def get_random_endpoint_for_person(to_text, from_text="Amazon"):
-    foo = ['outside', 'chainsaw', 'king', 'shakespeare', 'donut', 'ing', 'off', 'madison', 'yoda'] 
-    return "http://foaas.com/{}/{}/{}".format(random.choice(foo), urllib.quote(to_text), urllib.quote(from_text))
+# --------------- Code to communicate with foaas ------------------
 
-def get_random_endpoint(from_text="Amazon"):
-    foo = ['this', 'that', 'everything', 'everyone', 'pink', 'life', 'flying', 'family', 'retard', 'sake']  
-    return "http://foaas.com/{}/{}".format(random.choice(foo), urllib.quote(from_text))
-    
+def make_request(request):
+  try:
+    resp = requests.get(request, headers={ 'Accept': 'application/json' })
+    if resp.status_code != 200:
+      pass
+    else:
+      data = json.loads(resp.content)
+      return data
+  except: 
+    print("Request failed:", sys.exc_info()[0])
+  return None
 
-def get_person_insult(intent, session):
-    """ Sets the color in the session and prepares the speech to reply to the
-    user.
-    """
+def get_random_endpoint_for_person(to_text, endpoints, from_text="Your F-O-A-A-S Skill"):
+    return "http://foaas.com/{}/{}/{}".format(random.choice(endpoints), urllib.quote(to_text), urllib.quote(from_text))
 
-    card_title = intent['name']
+def get_random_endpoint(endpoints, from_text="Your F-O-A-A-S Skill"):
+    return "http://foaas.com/{}/{}".format(random.choice(endpoints), urllib.quote(from_text))
+
+def get_operations():
+  name_endpoints = list()
+  generic_endpoints = list()
+  try:
+    data = make_request("http://foaas.com/operations/")
+    for entry in data:
+      if len(entry['fields']) == 1:
+        generic_endpoints.append(entry['name'])
+      elif len(entry['fields']) == 2:
+        name_endpoints.append(entry['name'])
+  except: 
+    print("Could not get operations:", sys.exc_info()[0])  
+  return generic_endpoints, name_endpoints
+
+def get_message(request, default_text):
+  message = default_text
+  try:
+    message = make_request(request)['message']
+  except:
+    print("Get message failed", sys.exc_info()[0])
+    pass
+  return message
+
+def get_insult(kw, default_text):
+  op1, op2 = get_operations()
+  speech_output = default_text
+  try:
+    if kw:
+      speech_output = get_message(get_random_endpoint_for_person(kw, op2), speech_output)
+    else:
+      speech_output = get_message(get_random_endpoint(op1), speech_output)
+  except:
+    pass
+  return speech_output
+
+# --------------- End of foaas code ------------------
+
+
+def communicate_with_foaas(intent, session):
+    card_title = "What the Fuck"
     session_attributes = {}
     should_end_session = True
-
-    if 'KeyWord' in intent['slots']:
+    speech_output = "I didn't understand a fucking work!"
+    reprompt_text = ""
+    if intent['name'] == "AboutPerson":
         kw = intent['slots']['KeyWord']['value']
         #session_attributes = create_favorite_color_attributes(favorite_color)
         speech_output = "What the fuck is wrong with you asking me about " + \
                         kw
-        reprompt_text = ""
-        
-        try: 
-            request = get_random_endpoint_for_person(kw)
-            resp = requests.get(request, headers={ 'Accept': 'application/json' })
-            if resp.status_code != 200:
-                pass
-            else:
-                data = json.loads(resp.content)
-                speech_output = data['message']
-        except e: 
-            print (request)
-            print (e)
+        speech_output = get_insult(kw, speech_output)
     else:
-        speech_output = "I'm not sure what the fuck you said. " \
-                        "Please try again."
-        reprompt_text = "Martin is very bored on the weekends."
+        speech_output = get_insult(None, speech_output)
+
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
-
-def get_general_insult(intent, session):
-    """ Sets the color in the session and prepares the speech to reply to the
-    user.
-    """
-
-    card_title = intent['name']
-    session_attributes = {}
-    should_end_session = True
-
-    if 'KeyWord' in intent['slots']:
-        kw = intent['slots']['KeyWord']['value']
-        #session_attributes = create_favorite_color_attributes(favorite_color)
-        speech_output = "What the fuck is wrong with you asking me about " + \
-                        kw
-        reprompt_text = ""
-        
-        try: 
-            request = get_random_endpoint()
-            resp = requests.get(request, headers={ 'Accept': 'application/json' })
-            if resp.status_code != 200:
-                pass
-            else:
-                data = json.loads(resp.content)
-                speech_output = data['message']
-        except e: 
-            print (request)
-            print (e)
-        
-    else:
-        speech_output = "I'm not sure what the fuck you said. " \
-                        "Please try again."
-        reprompt_text = "Martin is very bored on the weekends."
-    return build_response(session_attributes, build_speechlet_response(
-        card_title, speech_output, reprompt_text, should_end_session))
-
 
 
 # --------------- Events ------------------
@@ -178,19 +171,17 @@ def on_launch(launch_request, session):
 def on_intent(intent_request, session):
     """ Called when the user specifies an intent for this skill """
 
-    print("on_intent requestId=" + intent_request['requestId'] +
-          ", sessionId=" + session['sessionId'])
+    #print("on_intent requestId=" + intent_request['requestId'] +
+    #      ", sessionId=" + session['sessionId'])
 
     intent = intent_request['intent']
     intent_name = intent_request['intent']['name']
 
     # Dispatch to your skill's intent handlers
-    if intent_name == "AboutPerson":
-        return get_person_insult(intent, session)
-    if intent_name == "AboutEveryone":
-        return get_general_insult(intent, session)
-    else:
-        raise ValueError("Invalid intent")
+    #if intent_name == "AboutPerson":
+    return communicate_with_foaas(intent, session)
+    #else:
+    #    raise ValueError("Invalid intent")
 
 
 def on_session_ended(session_ended_request, session):

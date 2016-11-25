@@ -6,5 +6,7 @@ AboutPerson to tell {Andy|KeyWord} to go fuck himself
 AboutPerson to tell {the world|KeyWord} to go fuck itself
 AboutPerson to tell {Tina|KeyWord} to go fuck herself
 AboutPerson to insult {everyone|KeyWord}
-AboutEveryone that they can {everyone|KeyWord}
+AboutEveryone that everyone can {go fuck off|KeyWord}
+AboutEveryone that everyone should {go fuck off|KeyWord}
+AboutEveryone that they can {go fuck off|KeyWord}
 AboutEveryone that they should {everyone|KeyWord}
