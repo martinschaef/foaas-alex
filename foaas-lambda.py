@@ -19,8 +19,8 @@ def build_speechlet_response(title, output, reprompt_text, should_end_session):
         },
         'card': {
             'type': 'Simple',
-            'title': "SessionSpeechlet - " + title,
-            'content': "SessionSpeechlet - " + output
+            'title': title,
+            'content': output
         },
         'reprompt': {
             'outputSpeech': {
@@ -49,21 +49,45 @@ def get_welcome_response():
 
     session_attributes = {}
     card_title = "Welcome"
-    speech_output = "Welcome to the F-O-A-A-S Skill. " \
-                    "Please tell me who to insult by saying, " \
-                    "tell person to fuck off, or everyone fuck off."
+    speech_output = "Welcome to the insult generator. " \
+                    "Please tell me who to insult by saying: " \
+                    "What do we say about Bob, or: Everyone should go home."
     # If the user either does not reply to the welcome message or says something
     # that is not understood, they will be prompted again with this text.
-    reprompt_text = "Please tell me who to insult by saying, " \
-                    "tell person to fuck off, or everyone fuck off."
+    reprompt_text = "Please tell me who to insult by saying: " \
+                    "What do we say about Bob, or: Everyone should go home."
     should_end_session = False
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
 
 
+def get_help_response():
+    session_attributes = {}
+    card_title = "Help"
+    speech_output = "Tell me who to insult by saying: " \
+                    "What do we say about Bob, or: Everyone should go home."
+    # If the user either does not reply to the welcome message or says something
+    # that is not understood, they will be prompted again with this text.
+    reprompt_text = "Tell me who to insult by saying: " \
+                    "What do we say about Bob, or: Everyone should go home."
+    should_end_session = False
+    return build_response(session_attributes, build_speechlet_response(
+        card_title, speech_output, reprompt_text, should_end_session))
+
+
+def get_stop_response():
+    session_attributes = {}
+    card_title = "Bye"
+    speech_output = "Ok."
+    reprompt_text = ""
+    should_end_session = True
+    return build_response(session_attributes, build_speechlet_response(
+        card_title, speech_output, reprompt_text, should_end_session))
+
+
 def handle_session_end_request():
-    card_title = "Session Ended"
-    speech_output = "Thank you for trying the F-O-A-A-S Skill. " \
+    card_title = "Bye"
+    speech_output = "Thank you for trying the insult generator. " \
                     "Have a nice day! "
     # Setting this to true ends the session and exits the skill.
     should_end_session = True
@@ -174,14 +198,21 @@ def on_intent(intent_request, session):
     #print("on_intent requestId=" + intent_request['requestId'] +
     #      ", sessionId=" + session['sessionId'])
 
+    
     intent = intent_request['intent']
     intent_name = intent_request['intent']['name']
 
     # Dispatch to your skill's intent handlers
-    #if intent_name == "AboutPerson":
-    return communicate_with_foaas(intent, session)
-    #else:
-    #    raise ValueError("Invalid intent")
+    if intent_name == "AboutPerson":
+        return communicate_with_foaas(intent, session)
+    elif intent_name == "AboutEveryone":
+        return communicate_with_foaas(intent, session)
+    elif intent_name == "AMAZON.HelpIntent":
+        return get_help_response()
+    elif (intent_name == "AMAZON.StopIntent") or (intent_name == "AMAZON.CancelIntent"):
+        return get_stop_response()
+    else:
+        raise ValueError("Invalid intent")
 
 
 def on_session_ended(session_ended_request, session):
@@ -222,3 +253,5 @@ def lambda_handler(event, context):
         return on_intent(event['request'], event['session'])
     elif event['request']['type'] == "SessionEndedRequest":
         return on_session_ended(event['request'], event['session'])
+
+
