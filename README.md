@@ -1,14 +1,13 @@
 # FOAAS Alexa Skill
 
-**[Activate it for your Echo here](https://www.amazon.com/dp/B01LZLFTMQ/ref=sr_1_1?s=digital-skills&ie=UTF8&qid=1480337765&sr=1-1&keywords=foaas)**
+**[Activate it for your Echo here](https://www.amazon.com/dp/B01LZLFTMQ)**
 
 An Alexa Lambda skill for the beautiful service [FOAAS](http://foaas.com/). 
 
 This work is inspired by the beautiful [Foaas Slack integration](https://github.com/revmischa/foaas-slack) which dramatically speeds up our team communication.
 
 With the Alexa Skill, your team will become even more efficient at communicating.
-The skill is currently under review and may be in your Alexa store shortly. In the
-meantime, if you want to use it, extend it, or modify it, perform the following steps:
+If you want to use it, extend it, or modify it, perform the following steps:
 
   - First, create an [AWS account](https://console.aws.amazon.com/) and go to [AWS Lambda](https://console.aws.amazon.com/lambda).
 
