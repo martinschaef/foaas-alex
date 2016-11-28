@@ -1,4 +1,7 @@
-# foaas-alex
+# FOAAS Alexa Skill
+
+**[Activate it for your Echo here](https://www.amazon.com/dp/B01LZLFTMQ/ref=sr_1_1?s=digital-skills&ie=UTF8&qid=1480337765&sr=1-1&keywords=foaas)**
+
 An Alexa Lambda skill for the beautiful service [FOAAS](http://foaas.com/). 
 
 This work is inspired by the beautiful [Foaas Slack integration](https://github.com/revmischa/foaas-slack) which dramatically speeds up our team communication.
