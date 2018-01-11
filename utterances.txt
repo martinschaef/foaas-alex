@@ -1,15 +1,5 @@
-AboutPerson what we think about {Bob|KeyWord}
-AboutPerson what we say about {Frank|KeyWord}
-AboutPerson what do we say about {Frank|KeyWord}
-AboutPerson what {Martin|KeyWord} should do
-AboutPerson tell {Ben|KeyWord} to fuck off
-AboutPerson to tell {Ben|KeyWord} to fuck off
-AboutPerson to tell {Andy|KeyWord} to go fuck himself
-AboutPerson to tell {the world|KeyWord} to go fuck itself
-AboutPerson to tell {Tina|KeyWord} to go fuck herself
-AboutPerson to insult {everyone|KeyWord}
-AboutEveryone everyone should {go home|KeyWord}
-AboutEveryone that everyone can {go fuck off|KeyWord}
-AboutEveryone that everyone should {go fuck off|KeyWord}
-AboutEveryone that they can {go fuck off|KeyWord}
-AboutEveryone that they should {everyone|KeyWord}
+to insult {KeyWord}
+to tell {KeyWord} to go fuck herself
+to tell {KeyWord} to go fuck himself
+to tell {KeyWord} to fuck off
+tell {KeyWord} to fuck off

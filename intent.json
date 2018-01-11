@@ -1,31 +1,43 @@
 {
-  "intents": [
-    {
-      "intent": "AboutPerson",
-      "slots": [
-        {
-          "name": "KeyWord",
-          "type": "AMAZON.LITERAL"
-        }
-      ]
-    },{
-      "intent": "AboutEveryone",
-      "slots": [
-        {
-          "name": "KeyWord",
-          "type": "AMAZON.LITERAL"
-        }
-      ]
-    },
-    {
-      "intent": "AMAZON.HelpIntent"
-    },
-    {
-      "intent": "AMAZON.StopIntent"
-    },    
-    {
-      "intent": "AMAZON.CancelIntent"
-    }    
-    
-  ]
+  "languageModel": {
+    "intents": [
+      {
+        "name": "AboutPerson",
+        "samples": [
+          "tell {KeyWord} to fuck off",
+          "to tell {KeyWord} to fuck off",
+          "to tell {KeyWord} to go fuck himself",
+          "to tell {KeyWord} to go fuck herself",
+          "to insult {KeyWord}"
+        ],
+        "slots": [
+          {
+            "name": "KeyWord",
+            "type": "AMAZON.Person"
+          }
+        ]
+      },
+      {
+        "name": "AMAZON.CancelIntent",
+        "samples": []
+      },
+      {
+        "name": "AMAZON.HelpIntent",
+        "samples": []
+      },
+      {
+        "name": "AMAZON.PauseIntent",
+        "samples": []
+      },
+      {
+        "name": "AMAZON.ResumeIntent",
+        "samples": []
+      },
+      {
+        "name": "AMAZON.StopIntent",
+        "samples": []
+      }
+    ],
+    "invocationName": "the insult generator"
+  }
 }

@@ -65,11 +65,11 @@ def get_help_response():
     session_attributes = {}
     card_title = "Help"
     speech_output = "Tell me who to insult by saying: " \
-                    "What do we say about Bob, or: Everyone should go home."
+                    "Alexa, ask the insult generator to insult bob."
     # If the user either does not reply to the welcome message or says something
     # that is not understood, they will be prompted again with this text.
     reprompt_text = "Tell me who to insult by saying: " \
-                    "What do we say about Bob, or: Everyone should go home."
+                    "Alexa, ask the insult generator to insult bob."
     should_end_session = False
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
@@ -107,6 +107,7 @@ def make_request(request):
       return data
   except: 
     print("Request failed:", sys.exc_info()[0])
+    return request
   return None
 
 def get_random_endpoint_for_person(to_text, endpoints, from_text="Your F-O-A-A-S Skill"):
@@ -115,19 +116,31 @@ def get_random_endpoint_for_person(to_text, endpoints, from_text="Your F-O-A-A-S
 def get_random_endpoint(endpoints, from_text="Your F-O-A-A-S Skill"):
     return "http://foaas.com/{}/{}".format(random.choice(endpoints), urllib.quote(from_text))
 
+name_endpoints = list()
+generic_endpoints = list()
+
 def get_operations():
+  global generic_endpoints, name_endpoints
+  if len(name_endpoints)>0 and len(generic_endpoints)>0:
+      return 
   name_endpoints = list()
   generic_endpoints = list()
   try:
     data = make_request("http://foaas.com/operations/")
     for entry in data:
+      #format has changed, now we have to look for the URL field and trim it.
+      endpoint = entry['name']
+      if 'url' in entry:
+        s = entry['url']
+        s = s[1:] #remove slash
+        s = s[:s.find('/')] # remove everything after second slash
+        endpoint = s
       if len(entry['fields']) == 1:
-        generic_endpoints.append(entry['name'])
+        generic_endpoints.append(endpoint)
       elif len(entry['fields']) == 2:
-        name_endpoints.append(entry['name'])
+        name_endpoints.append(endpoint)
   except: 
     print("Could not get operations:", sys.exc_info()[0])  
-  return generic_endpoints, name_endpoints
 
 def get_message(request, default_text):
   message = default_text
@@ -135,19 +148,21 @@ def get_message(request, default_text):
     message = make_request(request)['message']
   except:
     print("Get message failed", sys.exc_info()[0])
-    pass
   return message
 
 def get_insult(kw, default_text):
-  op1, op2 = get_operations()
+  global generic_endpoints, name_endpoints
+  get_operations()
   speech_output = default_text
+  url = None
   try:
     if kw:
-      speech_output = get_message(get_random_endpoint_for_person(kw, op2), speech_output)
+      url = get_random_endpoint_for_person(kw, name_endpoints)
     else:
-      speech_output = get_message(get_random_endpoint(op1), speech_output)
+      url = get_random_endpoint(generic_endpoints)
+    speech_output = get_message(url, speech_output)
   except:
-    pass
+    speech_output = url
   return speech_output
 
 # --------------- End of foaas code ------------------
@@ -161,9 +176,6 @@ def communicate_with_foaas(intent, session):
     reprompt_text = ""
     if intent['name'] == "AboutPerson":
         kw = intent['slots']['KeyWord']['value']
-        #session_attributes = create_favorite_color_attributes(favorite_color)
-        speech_output = "What the fuck is wrong with you asking me about " + \
-                        kw
         speech_output = get_insult(kw, speech_output)
     else:
         speech_output = get_insult(None, speech_output)
@@ -204,8 +216,6 @@ def on_intent(intent_request, session):
 
     # Dispatch to your skill's intent handlers
     if intent_name == "AboutPerson":
-        return communicate_with_foaas(intent, session)
-    elif intent_name == "AboutEveryone":
         return communicate_with_foaas(intent, session)
     elif intent_name == "AMAZON.HelpIntent":
         return get_help_response()
