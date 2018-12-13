@@ -14,8 +14,8 @@ import requests
 def build_speechlet_response(title, output, reprompt_text, should_end_session):
     return {
         'outputSpeech': {
-            'type': 'PlainText',
-            'text': output
+            'type': 'SSML',
+            'ssml': wrap_into_ssml(output)
         },
         'card': {
             'type': 'Simple',
@@ -24,8 +24,8 @@ def build_speechlet_response(title, output, reprompt_text, should_end_session):
         },
         'reprompt': {
             'outputSpeech': {
-                'type': 'PlainText',
-                'text': reprompt_text
+                'type': 'SSML',
+                'ssml': wrap_into_ssml(reprompt_text)
             }
         },
         'shouldEndSession': should_end_session
@@ -224,6 +224,16 @@ def on_intent(intent_request, session):
     else:
         raise ValueError("Invalid intent")
 
+
+def wrap_into_ssml(speech_string):
+    speech_string = speech_string.replace("fuck", "<phoneme alphabet=\"x-sampa\" ph=\"\'fVk\">f**k</phoneme>")
+    speech_string = speech_string.replace("Fuck", "<phoneme alphabet=\"x-sampa\" ph=\"\'fVk\">F**k</phoneme>")
+    speech_string = speech_string.replace("fucking", "<phoneme alphabet=\"x-sampa\" ph=\"\'fVking\">f**king</phoneme>")
+    speech_string = speech_string.replace("Fucking", "<phoneme alphabet=\"x-sampa\" ph=\"\'fVking\">F**ing</phoneme>")
+    speech_string = speech_string.replace("fucker", u"<phoneme alphabet=\"x-sampa\" ph=\"\'fVk3`r\\\">f**ker</phoneme>")
+    speech_string = speech_string.replace("Fucker", u"<phoneme alphabet=\"x-sampa\" ph=\"\'fVk3`r\\\">F**ker</phoneme>")
+
+    return "<speak>{}</speak>".format(speech_string)
 
 def on_session_ended(session_ended_request, session):
     """ Called when the user ends the session.
