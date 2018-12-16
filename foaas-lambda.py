@@ -51,11 +51,10 @@ def get_welcome_response():
     card_title = "Welcome"
     speech_output = "Welcome to the insult generator. " \
                     "Please tell me who to insult by saying: " \
-                    "What do we say about Bob, or: Everyone should go home."
+                    "Insult Frank, or tell me an insult."
     # If the user either does not reply to the welcome message or says something
     # that is not understood, they will be prompted again with this text.
-    reprompt_text = "Please tell me who to insult by saying: " \
-                    "What do we say about Bob, or: Everyone should go home."
+    reprompt_text = "Who shall I insult?"
     should_end_session = False
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
@@ -65,11 +64,10 @@ def get_help_response():
     session_attributes = {}
     card_title = "Help"
     speech_output = "Tell me who to insult by saying: " \
-                    "Alexa, ask the insult generator to insult bob."
+                    "Alexa, ask the insult generator to insult Anthony."
     # If the user either does not reply to the welcome message or says something
     # that is not understood, they will be prompted again with this text.
-    reprompt_text = "Tell me who to insult by saying: " \
-                    "Alexa, ask the insult generator to insult bob."
+    reprompt_text = "Who should I insult?"
     should_end_session = False
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
@@ -152,28 +150,33 @@ def get_message(request, default_text):
 
 def get_insult(kw, default_text):
   global generic_endpoints, name_endpoints
-  get_operations()
   speech_output = default_text
   url = None
-  try:
-    if kw:
-      url = get_random_endpoint_for_person(kw, name_endpoints)
-    else:
-      url = get_random_endpoint(generic_endpoints)
-    speech_output = get_message(url, speech_output)
-  except:
-    speech_output = url
+  retry = 2
+  while retry > 0:
+      retry = retry - 1
+      get_operations()
+      try:
+        if kw:
+          url = get_random_endpoint_for_person(kw, name_endpoints)
+        else:
+          url = get_random_endpoint(generic_endpoints)
+        speech_output = get_message(url, speech_output)
+        retry = 0
+      except:
+        speech_output = url
+        
   return speech_output
 
 # --------------- End of foaas code ------------------
 
 
 def communicate_with_foaas(intent, session):
-    card_title = "What the Fuck"
+    card_title = "FOAAS Response"
     session_attributes = {}
     should_end_session = True
     speech_output = "I didn't understand a fucking work!"
-    reprompt_text = ""
+    
     if intent['name'] == "AboutPerson":
         kw = intent['slots']['KeyWord']['value']
         speech_output = get_insult(kw, speech_output)
@@ -181,7 +184,7 @@ def communicate_with_foaas(intent, session):
         speech_output = get_insult(None, speech_output)
 
     return build_response(session_attributes, build_speechlet_response(
-        card_title, speech_output, reprompt_text, should_end_session))
+        card_title, speech_output, speech_output, should_end_session))
 
 
 # --------------- Events ------------------
