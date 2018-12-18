@@ -175,7 +175,7 @@ def communicate_with_foaas(intent, session):
     card_title = "FOAAS Response"
     session_attributes = {}
     should_end_session = True
-    speech_output = "I didn't understand a fucking work!"
+    speech_output = "I didn't understand a fucking word!"
     
     if intent['name'] == "AboutPerson":
         kw = intent['slots']['KeyWord']['value']
