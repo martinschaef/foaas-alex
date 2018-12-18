@@ -164,7 +164,7 @@ def get_insult(kw, default_text):
         speech_output = get_message(url, speech_output)
         retry = 0
       except:
-        speech_output = url
+	pass
         
   return speech_output
 
