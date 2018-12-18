@@ -11,7 +11,7 @@ If you want to use it, extend it, or modify it, perform the following steps:
 
   - First, create an [AWS account](https://console.aws.amazon.com/) and go to [AWS Lambda](https://console.aws.amazon.com/lambda).
 
-  - Create a new Lambda function for your skill. This has to be hosted in North Virgina if you want it to work with your Echo.
+  - Create a new Lambda function for your skill. This has to be hosted in North Virgina if you want it to work with your Echo. Select the Python 2.7 runtime.
 
   - Clone this repo and run `build.sh`. This generates a zip that you can upload as your Lambda function. Remember to change the handler of your Lambda in the settings to `foaas-lambda.lambda_handler`.
 
