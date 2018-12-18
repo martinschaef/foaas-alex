@@ -4,11 +4,17 @@
       {
         "name": "AboutPerson",
         "samples": [
-          "tell {KeyWord} to fuck off",
-          "to tell {KeyWord} to fuck off",
-          "to tell {KeyWord} to go fuck himself",
-          "to tell {KeyWord} to go fuck herself",
-          "to insult {KeyWord}"
+          "to insult {KeyWord}",
+          "about {KeyWord}",
+          "to describe {KeyWord}",
+          "what we think about {KeyWord}",
+          "what we think of {KeyWord}",
+          "how we feel about {KeyWord}",
+          "our opinion of {KeyWord}",
+          "about our opinion of {KeyWord}",
+          "what is our opinion of {KeyWord}",
+          "what our opinion of {KeyWord} is",
+          "what {KeyWord} means to us"
         ],
         "slots": [
           {
